@@ -30,15 +30,15 @@ void application()
   while (true) {
     hal::delay(*counter, 500ms);
 
-    as7341_sensor.set_smux(true);
-    std::array<hal::u16, 6> F1F4 = as7341_sensor.readAllChannels();
-
-    as7341_sensor.set_smux(false);
-    std::array<hal::u16, 6> F5F8 = as7341_sensor.readAllChannels();
+    std::array<hal::u16, 6> channel = as7341_sensor.readAllChannels();
 
     // 515nm & 555nm
-    hal::print<64>(*terminal, "F4 515nm: %u\n", F1F4[3]);  // cyan
-    hal::print<64>(*terminal, "F5 555nm: %u\n", F5F8[0]);  // green
+    // hal::print<64>(*terminal, "F1 415nm: %u\n", channel[0]);
+    // hal::print<64>(*terminal, "F2 445nm: %u\n", channel[1]);
+    // hal::print<64>(*terminal, "F3 480nm: %u\n", channel[2]);
+    hal::print<64>(*terminal, "F4 515nm: %u\n", channel[3]);  // cyan
+    hal::print<64>(*terminal, "F5 555nm: %u\n", channel[4]);  // green
+    // hal::print<64>(*terminal, "F6 590nm: %u\n", channel[5]);
   }
 }
 }  // namespace sjsu::drivers
