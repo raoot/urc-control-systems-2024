@@ -77,18 +77,6 @@ void as7341::set_smux(bool f1f4)
   hal::write(*m_i2c, m_address, write_buff, hal::never_timeout());
 }
 
-hal::u16 as7341::readChannel(adc_channel channel)
-{
-  // return channel value
-  hal::byte channel_register = static_cast<hal::byte>(channel);
-  std::array<hal::byte, 2> data{};
-
-  std::array<hal::byte, 1> write_to_address = { channel_register };
-  hal::write_then_read(*m_i2c, m_address, write_to_address, data);
-
-  return static_cast<hal::u16>(data[0]) | (static_cast<hal::u16>(data[1]) << 8);
-}
-
 std::array<hal::u16, 6> as7341::readAllChannels()
 {
   // read CH0 - CH5 (6 values)

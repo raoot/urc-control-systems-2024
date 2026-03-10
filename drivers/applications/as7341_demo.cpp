@@ -38,7 +38,7 @@ void application()
 
     // 515nm & 555nm
     hal::print<64>(*terminal, "F4 515nm: %u\n", F1F4[3]);  // cyan
-    hal::print<64>(*terminal, "F5 555nm: %u\n", F5F8[3]);  // green
+    hal::print<64>(*terminal, "F5 555nm: %u\n", F5F8[0]);  // green
   }
 }
 }  // namespace sjsu::drivers

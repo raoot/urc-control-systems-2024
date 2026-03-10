@@ -56,7 +56,6 @@ public:
   void F5F8_Clear_NIR();
   void set_smux(bool f1f4);
 
-  hal::u16 readChannel(adc_channel channel);
   std::array<hal::u16, 6> readAllChannels();
 };
 }  // namespace sjsu::drivers
