@@ -27,7 +27,8 @@ libhal_build_demos(
   # tla2528_output_pin_demo
   # tla2528_input_pin_demo
   # tla2528_analog_input_demo
-  apds9960_demo
+  # apds9960_demo
+  as7341_demo
 
   INCLUDES
   include
@@ -44,7 +45,8 @@ SOURCES
     # src/h_bridge.cpp
     # src/tla2528.cpp
     # src/tla2528_adapters.cpp
-    src/apds9960.cpp
+    # src/apds9960.cpp
+    src/as7341.cpp
 
     PACKAGES
     #Template for importing libhal packages is "libhal-__device__"
