@@ -18,7 +18,7 @@ void as7341::default_enable()
   // set PON = 1, then config device and enable interrupts before set SP_EN = 1
   std::array<hal::byte, 2> write_buff;
 
-  // start sensor (PON = 1)
+  // start sensor (PON = 1, SP_EN = 0)
   write_buff = { register_set::enable, 0x01 };
   hal::write(*m_i2c, m_address, write_buff, hal::never_timeout());
 
@@ -53,7 +53,7 @@ void as7341::set_smux(bool f1f4)
 {
   std::array<hal::byte, 2> write_buff;
 
-  write_buff = { register_set::enable, 0x01 };  // PON = 1
+  write_buff = { register_set::enable, 0x01 };  // PON = 1, SP_EN = 0
   hal::write(*m_i2c, m_address, write_buff, hal::never_timeout());
 
   hal::delay(*m_clock, 10ms);
@@ -65,12 +65,23 @@ void as7341::set_smux(bool f1f4)
     F5F8_Clear_NIR();
   }
 
-  write_buff = { register_set::smux, 0x10 };  // SMUX_CMD = 2
+  std::array<hal::byte, 1> write_to_address = { register_set::smux };
+  std::array<hal::byte, 1> cfg6{};
+  hal::write_then_read(*m_i2c, m_address, write_to_address, cfg6);
+  hal::byte new_cfg6 = (cfg6[0] & ~0x18) | 0x10;
+  write_buff = { register_set::smux, new_cfg6 };  // SMUX_CMD = 2
   hal::write(*m_i2c, m_address, write_buff, hal::never_timeout());
 
   hal::delay(*m_clock, 10ms);
 
-  write_buff = { register_set::enable, 0x03 };  // PON = 1, SP_EN = 1
+  write_buff = { register_set::enable,
+                 0x11 };  // PON = 1, SP_EN = 0, SMUXEN = 1
+  hal::write(*m_i2c, m_address, write_buff, hal::never_timeout());
+
+  hal::delay(*m_clock, 200ms);
+
+  write_buff = { register_set::enable,
+                 0x03 };  // PON = 1, SP_EN = 1, SMUXEN = 0
   hal::write(*m_i2c, m_address, write_buff, hal::never_timeout());
 }
 
@@ -79,15 +90,15 @@ std::array<hal::u16, 6> as7341::readAllChannels()
   // read CH0 - CH5 (6 values)
   // return a struct/array with all channel values
 
-  std::array<hal::byte, 12> buff{};
+  std::array<hal::byte, 12> write_buff{};
   std::array<hal::byte, 1> write_to_address = { static_cast<hal::byte>(
     adc_channel::ch0data) };
-  hal::write_then_read(*m_i2c, m_address, write_to_address, buff);
+  hal::write_then_read(*m_i2c, m_address, write_to_address, write_buff);
 
   for (int i = 0; i < 6; i++) {
     int idx = 2 * i;
-    channel_read[i] = static_cast<hal::u16>(buff[idx]) |
-                      (static_cast<hal::u16>(buff[idx + 1]) << 8);
+    channel_read[i] = static_cast<hal::u16>(write_buff[idx]) |
+                      (static_cast<hal::u16>(write_buff[idx + 1]) << 8);
   }
 
   return channel_read;

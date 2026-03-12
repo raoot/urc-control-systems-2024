@@ -38,9 +38,14 @@ void application()
     hal::delay(*counter, 300ms);
     std::array<hal::u16, 6> F5F8 = as7341_sensor.readAllChannels();
 
-    // 515nm & 555nm
+    // CLEAR (ADC Count Range: 0 – 65535)
+    hal::print<64>(*terminal, "CLEAR (F1F5): %u\n", F1F4[4]);
+    hal::print<64>(*terminal, "CLEAR (F5F8): %u\n", F5F8[4]);
+
+    // 515nm & 555nm (ADC Count Range: 0 – 65535)
     hal::print<64>(*terminal, "F4 515nm: %u\n", F1F4[3]);  // cyan
     hal::print<64>(*terminal, "F5 555nm: %u\n", F5F8[0]);  // green
+    // apply a digital filter to conjugate values
   }
 }
 }  // namespace sjsu::drivers
